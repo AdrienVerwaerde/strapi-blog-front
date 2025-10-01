@@ -32,9 +32,16 @@
   {:else}
     <div class="articles-list">
       {#each data.articles as article (article.documentId)}
-        <ArticleCard {article} />
+          <ArticleCard {article} />
       {/each}
     </div>
   {/if}
 </div>
 
+<style>
+  .articles-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

@@ -8,7 +8,7 @@ const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
  * @throws Si l'API Strapi renvoie une erreur, une erreur est levée avec le code d'état HTTP.
  */
 export async function fetchArticles(): Promise<ArticlesResponse> {
-    const response = await fetch(`${STRAPI_URL}/api/articles`);
+    const response = await fetch(`${STRAPI_URL}/api/articles?populate=coverImage`);
 
     if (!response.ok) {
         throw new Error(`Erreur lors de la récupération des articles: ${response.status}`);
@@ -25,7 +25,9 @@ export async function fetchArticles(): Promise<ArticlesResponse> {
  * @throws Si l'API Strapi renvoie une erreur, une erreur est levée avec le code d'état HTTP.
  */
 export async function fetchArticleByDocumentId(documentId: string): Promise<Article> {
-    const response = await fetch(`${STRAPI_URL}/api/articles/${documentId}`);
+    const response = await fetch(
+        `${STRAPI_URL}/api/articles/${documentId}?populate=*`
+    );
 
     if (!response.ok) {
         throw new Error(`Erreur lors de la récupération de l'article: ${response.status}`);
@@ -33,4 +35,17 @@ export async function fetchArticleByDocumentId(documentId: string): Promise<Arti
 
     const data = await response.json();
     return data.data;
+}
+
+// Fonction helper pour obtenir l'URL complète de l'image
+export function getImageUrl(url: string): string {
+    if (!url) return '';
+
+    // Si l'URL est déjà complète, la retourner telle quelle
+    if (url.startsWith('http')) {
+        return url;
+    }
+
+    // Sinon, ajouter l'URL de base de Strapi
+    return `${STRAPI_URL}${url}`;
 }

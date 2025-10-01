@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import type { PageData } from "./$types";
   import ArticleContent from "$lib/components/ArticleContent.svelte";
+  import { getImageUrl } from "$lib/services/api";
+  import Comments from "$lib/components/Comments.svelte";
 
   export let data: PageData;
 
@@ -10,44 +11,61 @@
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     });
   }
+
+  function getCoverImageUrl(): string {
+    if (!data.article.coverImage) return "";
+
+    const imageUrl =
+      data.article.coverImage.formats?.large?.url ||
+      data.article.coverImage.url;
+
+    return getImageUrl(imageUrl);
+  }
+
+  const coverImageUrl = getCoverImageUrl();
 </script>
 
 <svelte:head>
-  <title>{data.article.title} - Mon Blog</title>
+  <title>{data.article.title} - Blog</title>
   <meta name="description" content={data.article.title} />
 </svelte:head>
 
 <article class="article-detail">
-  <div class="article-header">
+  <div class="back-link-container">
     <a href="/" class="back-link">← Retour aux articles</a>
+  </div>
 
+  {#if coverImageUrl}
+    <div class="article-cover">
+      <img
+        src={coverImageUrl}
+        alt={data.article.coverImage?.alternativeText || data.article.title}
+      />
+    </div>
+  {/if}
+
+  <div class="article-header">
     <h1>{data.article.title}</h1>
 
     <div class="article-meta">
       <div class="meta-item">
-        <span class="label">Auteur :</span>
+        <span class="label">Auteur:</span>
         <span class="value">{data.article.authorName}</span>
       </div>
       <div class="meta-item">
-        <span class="label">Publié le :</span>
+        <span class="label">Publié le:</span>
         <span class="value">{formatDate(data.article.publishedAt)}</span>
       </div>
-      {#if data.article.updatedAt !== data.article.createdAt}
-        <div class="meta-item">
-          <span class="label">Mis à jour le :</span>
-          <span class="value">{formatDate(data.article.updatedAt)}</span>
-        </div>
-      {/if}
     </div>
   </div>
 
   <div class="article-body">
     <ArticleContent content={data.article.content} />
   </div>
+
+  <Comments comments={data.article.comments || []} />
 
   <div class="article-footer">
     <a href="/" class="back-link">← Retour aux articles</a>
@@ -61,6 +79,24 @@
     padding: 2rem;
   }
 
+  .back-link-container {
+    margin-bottom: 2rem;
+  }
+
+  .article-cover {
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .article-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   .article-header {
     margin-bottom: 3rem;
   }
@@ -69,7 +105,6 @@
     display: inline-block;
     color: #2563eb;
     text-decoration: none;
-    margin-bottom: 2rem;
     font-size: 0.95rem;
   }
 
@@ -122,6 +157,11 @@
   @media (max-width: 768px) {
     .article-detail {
       padding: 1rem;
+    }
+
+    .article-cover {
+      max-height: 300px;
+      border-radius: 8px;
     }
 
     h1 {

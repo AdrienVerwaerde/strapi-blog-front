@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { Article } from "$lib/types/article";
+  import { getImageUrl } from "$lib/services/api";
+  import { goto } from "$app/navigation";
 
   export let article: Article;
 
@@ -16,83 +18,107 @@
       day: "numeric",
     });
   }
+
+  // Get l'image de couverture
+  function getCoverImageUrl(): string {
+    if (!article.coverImage) return "";
+
+    // Essayer d'abord le format medium, puis small, puis l'original
+    const imageUrl =
+      article.coverImage.formats?.medium?.url ||
+      article.coverImage.formats?.small?.url ||
+      article.coverImage.url;
+
+    return getImageUrl(imageUrl);
+  }
+
+  const coverImageUrl = getCoverImageUrl();
+  function handleCardClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (target.tagName === "A" || target.closest("a")) {
+      return;
+    }
+
+    goto(`/articles/${article.documentId}`);
+  }
 </script>
 
-<article class="article-card">
-  <h2>
-    <a href="/articles/{article.documentId}">{article.title}</a>
-  </h2>
+<article
+  class="article-card"
+  on:click={handleCardClick}
+>
+  {#if coverImageUrl}
+    <div class="article-image">
+      <img
+        src={coverImageUrl}
+        alt={article.coverImage?.alternativeText || article.title}
+        loading="lazy"
+      />
+    </div>
+  {/if}
 
-  <div class="article-meta">
-    <span class="author">Par {article.authorName}</span>
-    <span class="date">{formatDate(article.publishedAt)}</span>
+  <div class="article-content">
+    <h2>
+      {article.title}
+    </h2>
+
+    <div class="article-meta">
+      <span class="author">Par <b>{article.authorName}</b></span>
+      <span class="date">{formatDate(article.publishedAt)}</span>
+    </div>
+
+    <div class="article-excerpt">
+      {extractText(article.content).substring(0, 200)}...
+    </div>
   </div>
-
-  <div class="article-excerpt">
-    {extractText(article.content).substring(0, 200)}...
-  </div>
-
-  <a href="/articles/{article.documentId}" class="read-more"> Lire la suite → </a>
 </article>
 
 <style>
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: #333;
-  }
-
-  .error {
-    background-color: #fee;
-    border: 1px solid #fcc;
-    padding: 1rem;
-    border-radius: 4px;
-    color: #c33;
-  }
-
-  .no-articles {
-    text-align: center;
-    color: #666;
-    font-style: italic;
-  }
-
-  .articles-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
   .article-card {
-    border: 1px solid #e0e0e0;
+    background: white;
     border-radius: 8px;
-    padding: 1.5rem;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 540px;
+    overflow: hidden;
+    margin: 1rem;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
   }
 
   .article-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
   }
 
-  .article-card h2 {
-    margin: 0 0 0.75rem 0;
-    font-size: 1.75rem;
+  .article-image {
+    width: 100%;
+    height: 340px;
+    overflow: hidden;
+    background-color: #f5f5f5;
   }
 
-  .article-card h2 a {
-    color: #2563eb;
+  .article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .article-card:hover .article-image img {
+    transform: scale(1.05);
+  }
+
+  .article-content {
+    padding: 1.5rem;
     text-decoration: none;
   }
 
-  .article-card h2 a:hover {
-    text-decoration: underline;
+  h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    line-height: 1.3;
   }
 
   .article-meta {
@@ -109,13 +135,17 @@
     margin-bottom: 1rem;
   }
 
-  .read-more {
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 500;
-  }
+  @media (max-width: 768px) {
+    .article-image {
+      height: 200px;
+    }
 
-  .read-more:hover {
-    text-decoration: underline;
+    .article-content {
+      padding: 1rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+    }
   }
 </style>
