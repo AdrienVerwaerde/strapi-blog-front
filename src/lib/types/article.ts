@@ -21,3 +21,7 @@ export interface Article {
 export interface ArticlesResponse {
     data: Article[];
 }
+
+export interface SingleArticleResponse {
+    data: Article;
+}
