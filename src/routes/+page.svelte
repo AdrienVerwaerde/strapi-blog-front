@@ -43,5 +43,12 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 </style>

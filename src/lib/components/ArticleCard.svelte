@@ -80,7 +80,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 540px;
     overflow: hidden;
-    margin: 1rem;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     transition:
       transform 0.2s,
       box-shadow 0.2s;

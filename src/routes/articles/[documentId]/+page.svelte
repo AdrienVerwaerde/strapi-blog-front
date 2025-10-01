@@ -77,6 +77,7 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 
   .back-link-container {
@@ -103,13 +104,18 @@
 
   .back-link {
     display: inline-block;
-    color: #2563eb;
+    color: #ffffff;
+    font-weight: bold;
+    background-color: rgb(102, 102, 255);
+    padding: 0.5rem;
+    border-radius: 12px;
     text-decoration: none;
     font-size: 0.95rem;
+    transition: all 0.1s ease-in-out;
   }
 
   .back-link:hover {
-    text-decoration: underline;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.178);
   }
 
   h1 {
@@ -117,6 +123,10 @@
     line-height: 1.2;
     margin-bottom: 1.5rem;
     color: #111;
+  }
+
+  .value {
+    font-weight: bold;
   }
 
   .article-meta {

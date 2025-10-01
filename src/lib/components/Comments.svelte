@@ -114,20 +114,6 @@
     background: #f3f4f6;
   }
 
-  .comment-avatar {
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
   .comment-content {
     flex: 1;
     min-width: 0;
