@@ -3,6 +3,7 @@
   import ArticleContent from "$lib/components/ArticleContent.svelte";
   import { getImageUrl } from "$lib/services/api";
   import Comments from "$lib/components/Comments.svelte";
+  import CommentsForm from "$lib/components/CommentsForm.svelte";
 
   export let data: PageData;
 
@@ -66,6 +67,7 @@
   </div>
 
   <Comments comments={data.article.comments || []} />
+  <CommentsForm articleDocumentId={data.article.documentId} />
 
   <div class="article-footer">
     <a href="/" class="back-link">← Retour aux articles</a>
@@ -77,7 +79,18 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      "Open Sans",
+      "Helvetica Neue",
+      sans-serif;
   }
 
   .back-link-container {
@@ -106,16 +119,18 @@
     display: inline-block;
     color: #ffffff;
     font-weight: bold;
-    background-color: rgb(102, 102, 255);
-    padding: 0.5rem;
-    border-radius: 12px;
+    background-color: #333;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
     text-decoration: none;
     font-size: 0.95rem;
     transition: all 0.1s ease-in-out;
   }
 
   .back-link:hover {
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.178);
+    background: rgb(34, 34, 53);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 34, 53, 0.3);
   }
 
   h1 {

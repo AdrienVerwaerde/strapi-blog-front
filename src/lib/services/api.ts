@@ -1,12 +1,7 @@
-import type { ArticlesResponse, Article } from '$lib/types/article';
+import type { ArticlesResponse, Article, Comment } from '$lib/types/article';
 
 const STRAPI_URL = import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337';
 
-/**
- * Récupère la liste des articles depuis l'API Strapi.
- * @returns Une promesse qui résout en un objet ArticlesResponse contenant la liste des articles.
- * @throws Si l'API Strapi renvoie une erreur, une erreur est levée avec le code d'état HTTP.
- */
 export async function fetchArticles(): Promise<ArticlesResponse> {
     const response = await fetch(`${STRAPI_URL}/api/articles?populate=coverImage`);
 
@@ -17,13 +12,6 @@ export async function fetchArticles(): Promise<ArticlesResponse> {
     return await response.json();
 }
 
-
-/**
- * Récupère un article depuis l'API Strapi.
- * @param {string} documentId - L'identifiant unique de l'article.
- * @returns Une promesse qui résout en un objet Article contenant les informations de l'article.
- * @throws Si l'API Strapi renvoie une erreur, une erreur est levée avec le code d'état HTTP.
- */
 export async function fetchArticleByDocumentId(documentId: string): Promise<Article> {
     const response = await fetch(
         `${STRAPI_URL}/api/articles/${documentId}?populate=*`
@@ -37,15 +25,37 @@ export async function fetchArticleByDocumentId(documentId: string): Promise<Arti
     return data.data;
 }
 
-// Fonction helper pour obtenir l'URL complète de l'image
-export function getImageUrl(url: string): string {
-    if (!url) return '';
+export async function createComment(
+    articleDocumentId: string,
+    authorName: string,
+    content: string
+): Promise<Comment> {
+    const response = await fetch(`${STRAPI_URL}/api/comments`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            data: {
+                authorName,
+                content,
+                article: articleDocumentId,
+                publishedAt: new Date().toISOString()
+            }
+        })
+    });
 
-    // Si l'URL est déjà complète, la retourner telle quelle
-    if (url.startsWith('http')) {
-        return url;
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Erreur lors de la création du commentaire');
     }
 
-    // Sinon, ajouter l'URL de base de Strapi
-    return `${STRAPI_URL}${url}`;
+    const data = await response.json();
+    return data.data;
+}
+
+export function getImageUrl(path: string): string {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${STRAPI_URL}${path}`;
 }

@@ -21,7 +21,8 @@
 </script>
 
 <div class="container">
-  <h1>Liste des articles</h1>
+  <h1 class="title">StrapiBlog</h1>
+  <h2>Liste des articles</h2>
 
   {#if data.error}
     <div class="error">
@@ -32,7 +33,7 @@
   {:else}
     <div class="articles-list">
       {#each data.articles as article (article.documentId)}
-          <ArticleCard {article} />
+        <ArticleCard {article} />
       {/each}
     </div>
   {/if}
@@ -46,9 +47,26 @@
     gap: 1.5rem;
   }
 
-  h1 {
+  h2 {
     text-align: center;
-    margin-bottom: 2rem;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 2rem;
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      "Open Sans",
+      "Helvetica Neue",
+      sans-serif;
+  }
+
+  .title {
+    text-align: center;
+    margin: 2rem;
+    font-family: "Rubik Mono One", monospace;
   }
 </style>
